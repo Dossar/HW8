@@ -35,7 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/hw8.o
+	${OBJECTDIR}/hw8functions.o \
+	${OBJECTDIR}/hw8main.o
 
 
 # C Compiler Flags
@@ -62,10 +63,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw8.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/hw8 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/hw8.o: hw8.cpp 
+${OBJECTDIR}/hw8functions.o: hw8functions.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/hw8.o hw8.cpp
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/hw8functions.o hw8functions.cpp
+
+${OBJECTDIR}/hw8main.o: hw8main.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/hw8main.o hw8main.cpp
 
 # Subprojects
 .build-subprojects:
