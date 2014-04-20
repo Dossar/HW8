@@ -31,7 +31,6 @@ const char NO_ONE = 'N';
 
 // function prototypes
 void instructions();
-char askYesNo(string question);
 int askNumber(string question, int high, int low = 0);
 char humanPiece();
 char opponent(char piece);
@@ -41,6 +40,68 @@ bool isLegal(const vector<char>& board, int move);
 int humanMove(const vector<char>& board, char human);
 int computerMove(vector<char> board, char computer);
 void announceWinner(char winner, char computer, char human);
+
+class Game {
+
+	public:
+		void instructions(); // Print out instructions
+		char askNumber(); // Ask user to enter a choice on the board.
+                char getTurn(){ return turn; } // Return what the current turn is.
+                char changeTurn();
+//                char changeTurn()
+//                {
+//                        if ( turn == X)
+//                                return O;
+//                        else
+//                                return X;
+//                }
+                bool isLegal(const vector<char>& board, int move);
+                void announceWinner(char winner, char computer, char human);
+                
+        protected:
+                char turn; // This member variable stores whose turn it is (human or computer, X or O).
+		
+
+};
+
+class Board : public Game {
+
+	public:
+		void displayBoard(); // Shows progress of the game with the current board moves.
+                
+	protected:
+		vector<char> board; // This is the playing field.
+
+
+};
+
+// Generalization of a tic tac toe player.
+// Human and COmputer inherit these members.
+class AbstractPlayer : public Board {
+
+	public:
+		virtual int playerMove(); // This is for determining where a player moves on the board.
+                char getSymbol(){ return symbol; } // Return player's symbol to display (X or O).
+
+	protected:
+		int pChoice; // Player's choice during the game to place on the board
+		char symbol; // Symbol is either X or O for the game.
+
+};
+
+class Human : public AbstractPlayer {
+
+	public:
+                int playerMove(); // Determine user's move on the board.
+		char goFirst(); // Prompt user to go first or not, computer does not decide this.
+
+};
+
+class Compter : public AbstractPlayer {
+    
+        public:
+                int playerMove(); // Determine computer's move on the board.
+};
 
 #endif	/* HW8CLASSES_H */
 
