@@ -20,8 +20,8 @@
 using namespace std;
 
 // global constants
-const char X = 'X';
-const char O = 'O';
+const char X = 'X'; // 1st player
+const char O = 'O'; // 2nd player
 const char EMPTY = ' ';
 const char TIE = 'T';
 const char NO_ONE = 'N';
