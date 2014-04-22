@@ -2,8 +2,8 @@
  * File:   hw8classes.h
  * Author: Roy Van Liew and Saqib Zahid
  * This is the header file for the Tic Tac Toe OOP design.
- * This has function declarations (not definitions) and class definitions.
- * Last modified on April 19, 2014, 8:00 PM
+ * This has function declarations and class definitions.
+ * Last modified on April 21, 2014, 8:37 PM
  */
 
 #include <iostream>
@@ -16,58 +16,26 @@ using namespace std;
 #ifndef HW8CLASSES_H
 #define	HW8CLASSES_H
 
-//class Critter
-//{
-//public:
-//    void Greet();
-//};
-
-// global constants
-const char X = 'X'; // 1st player
-const char O = 'O'; // 2nd player
-const char EMPTY = ' ';
-const char TIE = 'T';
-const char NO_ONE = 'N';
-
-// function prototypes
-void instructions();
-int askNumber(string question, int high, int low = 0);
-char humanPiece();
-char opponent(char piece);
-void displayBoard(const vector<char>& board);
-char winner(const vector<char>& board);
-bool isLegal(const vector<char>& board, int move);
-int humanMove(const vector<char>& board, char human);
-int computerMove(vector<char> board, char computer);
-void announceWinner(char winner, char computer, char human);
-
-class Game {
+// Board is the class that represents a playing field of Tic Tac Toe.
+class Board {
 
 	public:
-		void instructions(); // Print out instructions
-		char askNumber(); // Ask user to enter a choice on the board.
-                char getTurn(){ return turn; } // Return what the current turn is.
-                char changeTurn();
-//                char changeTurn()
-//                {
-//                        if ( turn == X)
-//                                return O;
-//                        else
-//                                return X;
-//                }
-                bool isLegal(const vector<char>& board, int move);
-                void announceWinner(char winner, char computer, char human);
+                // Create an empty tic tac toe board. 9 spots, fill with space characters.
+                Board()
+                {
+                    int i;
+                    for ( i = 0 ; i < 9 ; i++ )
+                        board.push_back(' ');
+                }
                 
-        protected:
-                char turn; // This member variable stores whose turn it is (human or computer, X or O).
-		
+                // Board functions, including mutator
+		void displayBoard( char user , char cpu ); // Shows progress of the game.
+                void changeBoard( int choice , char playerSymbol ); // Mutator, inserts character into board
+                bool legal(int move); // Determines if player's choice is acceptable               
 
-};
-
-class Board : public Game {
-
-	public:
-		void displayBoard(); // Shows progress of the game with the current board moves.
+                // Board accessors.
+                vector<char> getBoard(){ return board; } // Get a copy of the board.
+                int getSize(){ return board.size(); } // Get the size of the board for bounds.
                 
 	protected:
 		vector<char> board; // This is the playing field.
@@ -75,32 +43,56 @@ class Board : public Game {
 
 };
 
-// Generalization of a tic tac toe player.
-// Human and COmputer inherit these members.
-class AbstractPlayer : public Board {
+// Game monitors the status of the Tic Tac Toe game. It changes turns and checks for a winner.
+class Game {
 
 	public:
-		virtual int playerMove(); // This is for determining where a player moves on the board.
+                // First turn is always X.
+                Game()
+                {
+                    turn = 'X';
+                }
+                
+		void instructions(); // Print out instructions
+                char getTurn(){ return turn; } // Return what the current turn is.
+                void changeTurn(); // Change the turn for after a player fills in a spot.
+                char checkWinner( Board& gameBoard ); // Check if there's a winner, tie, or neither.
+                void announceWinner(char winner, char computer, char human); // Output the winner.
+                
+        protected:
+                char turn; // This member variable stores whose turn it is (human or computer, X or O).
+		
+
+};
+
+// Generalization of a tic tac toe player. Human and Computer inherit these members.
+class AbstractPlayer {
+
+	public:
+		virtual void playerMove( Board& gameBoard ){} // This is for determining where a player moves on the board.
                 char getSymbol(){ return symbol; } // Return player's symbol to display (X or O).
 
 	protected:
-		int pChoice; // Player's choice during the game to place on the board
 		char symbol; // Symbol is either X or O for the game.
 
 };
 
+// The class for the user playing. The user decides who goes first.
 class Human : public AbstractPlayer {
 
 	public:
-                int playerMove(); // Determine user's move on the board.
-		char goFirst(); // Prompt user to go first or not, computer does not decide this.
+                void playerMove( Board& gameBoard ); // Determine user's move on the board.
+		void goFirst(); // Set the user's symbol (X or O), determines if user goes first or not.
 
 };
 
-class Compter : public AbstractPlayer {
+// The class for the computer player.
+class Computer : public AbstractPlayer {
     
         public:
-                int playerMove(); // Determine computer's move on the board.
+                void playerMove( Game& game , Board& gameBoard , char human ); // Determine computer's move on the board.
+                void computerSymbol(char humanSymbol); // Set computer's symbol (X or O) depending on user symbol.
+
 };
 
 #endif	/* HW8CLASSES_H */

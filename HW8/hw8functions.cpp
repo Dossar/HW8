@@ -2,7 +2,7 @@
  * File:   hw8functions.cpp
  * Author: Roy Van Liew and Saqib Zahid
  * This file contains the actual implementations for the application.
- * Last modified on April 19, 2014, 8:02 PM
+ * Last modified on April 21, 2014, 8:36 PM
  */
 
 #include <iostream>
@@ -13,196 +13,229 @@
 
 using namespace std;
 
-//void Critter::Greet()    
-//{
-//    cout << "Hi. I'm a critter.\n";
-//}
 
-void instructions()
+/********************************************************
+ *                      GAME FUNCTIONS                  *
+ ********************************************************/
+
+// This function explains how to play the game to the user.
+void Game::instructions()
 {
-    cout << "In this Tic-Tac-Toe your move should be a number between 0-8.:\n\n";
-
-    // Display sample board for user.
-    cout << "       0 | 1 | 2\n";
-    cout << "       3 | 4 | 5\n";
-    cout << "       6 | 7 | 8\n\n";
+    cout << "\nWelcome. In this Tic-Tac-Toe your move should be a number between 0-8:\n\n";
+    cout << "\t[ 0 | 1 | 2 ]" << endl;
+    cout << "\t[ 3 | 4 | 5 ]" << endl;
+    cout << "\t[ 6 | 7 | 8 ]\n" << endl;
 
 }
 
-int askNumber(string question, int high, int low)
+// This function changes the turn after a player has chosen a spot.
+void Game::changeTurn()
 {
-    int number;
-    do
+    if ( turn == 'X')
+        turn = 'O';
+    else
+        turn = 'X';
+}
+
+// This function returns a character (X, O, N, or T) based on who won or not.
+char Game::checkWinner(Board& gameBoard)
+{
+    // This 2D array lists all the possible row combinations you can win with.
+    // 0 | 1 | 2
+    // 3 | 4 | 5
+    // 6 | 7 | 8
+    const int winRows[8][3] = { {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6},
+                                {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6} };
+    
+    // check is a copy of the current game board.
+    const vector<char> check = gameBoard.getBoard();
+
+    // Traverse through winRows to find all possible winning rows.
+    // Check all three numbers in the winning row.
+    // If any winning row has the same character values and is not empty, there is a winner.
+    for(int row = 0; row < 8 ; ++row)
     {
-        cout << question << " (" << low << " - " << high << "): ";
-        cin >> number;
-    } while (number > high || number < low);
+        if ( ( check[ winRows[row][0] ] != ' ' ) &&
+             ( check[ winRows[row][0] ] == check[ winRows[row][1] ] ) &&
+             ( check[ winRows[row][1] ] == check[ winRows[row][2] ] ) )
+        {
+            return check[ winRows[row][0] ]; // Return the character of the winner (X or O).
+        }
+    }
 
-    return number;
+    // Getting to this point means there is not a clear winner. Check for a tie (no empty spots left).
+    if ( count( check.begin() , check.end() , ' ' ) == 0 )
+        return 'T'; // Return 'T' for tie.
+
+    // If there is no winner and there is not a tie, the game is still going.
+    return 'N'; // Return 'N' for nobody.
+    
 }
 
-/*
- * humanPiece asks if the user wants to go first or not.
- * askYesNo is called for the actual input.
- */
-char humanPiece()
+// When the winner is no longer 'N', that means the board is filled.
+// This function outputs the winner or if there was a tie.
+void Game::announceWinner( char winner, char computer, char human )
 {
-        char response;
+    
+    if ( winner == computer ) {
+        cout << "Computer has won." << endl;
+    }
+    else if ( winner == human ) {
+        cout << "You won." << endl;
+    }
+    else {
+        cout << "It's a tie." << endl;
+    }
+    
+}
+
+/********************************************************
+ *                      HUMAN FUNCTIONS                 *
+ ********************************************************/
+
+// Ask the user if the user wants to go first in the game.
+// This function also sets the user's symbol for the game (X or O).
+void Human::goFirst()
+{
+    char response;
     do
     {
         cout << "Do you want to go first? (y/n): ";
         cin >> response;
     } while (response != 'y' && response != 'n');
     if (response == 'y'){
-        cout << "\nHuman player is going first.\n";
-        return X;
+        cout << "\nYou are going first.\n";
+        symbol = 'X';
     }
     else{
-        cout << "\nComputer player is going first.\n";
-        return O;
+        cout << "\nComputer is going first.\n";
+        symbol = 'O';
     }
+    
 }
 
-char opponent(char piece)
+// Determine spot to fill in from user.
+void Human::playerMove( Board& gameBoard )
 {
-    if (piece == X)
-        return O;
-    else
-        return X;
-}
-
-void displayBoard(const vector<char>& board)
-{
-    cout << "\n\t*CURRENT*\n";
-    cout << "\t" << board[0] << " | " << board[1] << " | " << board[2] << "\t[ 0 1 2 ]" << endl;
-    cout << "\t" << board[3] << " | " << board[4] << " | " << board[5] << "\t[ 3 4 5 ]" << endl;
-    cout << "\t" << board[6] << " | " << board[7] << " | " << board[8] << "\t[ 6 7 8 ]" << endl;
-    cout << "\n";
-}
-
-char winner(const vector<char>& board)
-{
-    // This 2D array lists all the possible row combinations you can win with.
-    // 0 | 1 | 2
-    // 3 | 4 | 5
-    // 6 | 7 | 8
-    const int winRows[8][3] = { {0, 1, 2},
-                                     {3, 4, 5},
-                                     {6, 7, 8},
-                                     {0, 3, 6},
-                                     {1, 4, 7},
-                                     {2, 5, 8},
-                                     {0, 4, 8},
-                                     {2, 4, 6} };
-    const int TOTAL_ROWS = 8;
-
-    // if any winning row has three values that are the same (and not EMPTY),
-    // then we have a winner
-    for(int row = 0; row < TOTAL_ROWS; ++row)
+    int low = 0; // The lowest choice is the first spot in the board.
+    int high = gameBoard.getSize() - 1; // Can only choose up to the max size of the board.
+    int move; // Player's choice for the board.
+    
+    // User enters board spot. Spot has to be one that isn't filled in and is in bounds.
+    do
     {
-        if ( ( board[ winRows[row][0] ] != EMPTY ) &&
-             ( board[ winRows[row][0] ] == board[ winRows[row][1] ] ) &&
-             ( board[ winRows[row][1] ] == board[ winRows[row][2] ] ) )
-        {
-            return board[ winRows[row][0] ];
+        cout << "Where will you move? ( " << low << " - " << high << " ): ";
+        cin >> move;
+        // If a spot is already occupied, it is not a legal move.
+        if( !gameBoard.legal(move) ) {
+            cout << "\nSorry, " << move << " is not a valid choice." << endl;
+            move = -1;
         }
-    }
+    } while ( move > high || move < low);
+    
+    gameBoard.changeBoard( move , symbol ); // Enter this move into the board with the player's symbol.
+    cout << "You chose square " << move << endl;
 
-    // since nobody has won, check for a tie (no empty squares left)
-    if (count(board.begin(), board.end(), EMPTY) == 0)
-        return TIE;
-
-    // since nobody has won and it isn't a tie, the game ain't over
-    return NO_ONE;
 }
 
-inline bool isLegal(int move, const vector<char>& board)
+
+/********************************************************
+ *                   COMPUTER FUNCTIONS                 *
+ ********************************************************/
+
+// Determine the computer's symbol based on what the user entered.
+void Computer::computerSymbol(char humanSymbol)
 {
-    return (board[move] == EMPTY);
+    if ( humanSymbol == 'X')
+        symbol = 'O';
+    else
+        symbol = 'X';
 }
 
-int humanMove(const vector<char>& board, char human)
+// Determine spot to fill in from computer.
+void Computer::playerMove( Game& game , Board& gameBoard , char human )
 {
-    int move = askNumber("Where will you move?", (board.size() - 1));
-    while (!isLegal(move, board))
-    {
-        cout << "\nThe square " << move << " is already occupied.\n";
-        move = askNumber("Where will you move?", (board.size() - 1));
-    }
-    cout << "Human has chosen square " << move << endl;
-    return move;
-}
-
-int computerMove(vector<char> board, char computer)
-{
+    
+    int move, i; // Counters in the for loops. move determines the position of the symbol.
     cout << "Computer has chosen square ";
     
-    // if computer can win on next move, make that move
-    for(int move = 0; move < board.size(); ++move)
+    // If computer can win on next move, make that move.
+    for( move = 0; move < gameBoard.getSize() ; move++ )
     {
-        if (isLegal(move, board))
+        if ( gameBoard.legal( move ) )
         {
-            board[move] = computer;
-            if (winner(board) == computer)
+            gameBoard.changeBoard( move , symbol );
+            // Check if this move made the computer win.
+            if ( game.checkWinner( gameBoard ) == symbol )
             {
                 cout << move << endl;
-                return move;
+                return;
             }
-            // done checking this move, undo it
-            board[move] = EMPTY;
+            // If the computer didn't win, undo the move by setting the spot empty again.
+            gameBoard.changeBoard( move , ' ' );
         }
     }
         
-    // if human can win on next move, block that move
-    char human = opponent(computer);
-    for(int move = 0; move < board.size(); ++move)
+    // Check if the human can win on the next move, block that move.
+    for( move = 0 ; move < gameBoard.getSize() ; move++ )
     {
-        if (isLegal(move, board))
+        if ( gameBoard.legal( move ) )
         {
-            board[move] = human;
-            if (winner(board) == human)
+            // Fill in a spot with the human's symbol and see if the human can win there.
+            // If the human can win there, the computer fills in that spot.
+            gameBoard.changeBoard( move , human );
+            if ( game.checkWinner( gameBoard ) == human )
             {
+                gameBoard.changeBoard( move , symbol );
                 cout << move << endl;
-                return move;
+                return;
             }
-            // done checking this move, undo it
-            board[move] = EMPTY;
+            // Otherwise, this means that the human can't win the next move. Set the spot empty again.
+            gameBoard.changeBoard( move , ' ' );
         }
     }
 
-    // the best moves to make, in order
+    // These are the best moves to make in order.
     const int BEST_MOVES[] = {4, 0, 2, 6, 8, 1, 3, 5, 7};
-    // since no one can win on next move, pick best open square
-    for(int i = 0; i < board.size(); ++i)
+    
+    // Since no one can win on the next move, pick the best open square.
+    for( i = 0 ; i < gameBoard.getSize() ; i++ )
     {
-        int move = BEST_MOVES[i];
-        if (isLegal(move, board))
+        move = BEST_MOVES[i];
+        if ( gameBoard.legal( move ) )
         {
+            gameBoard.changeBoard( move , symbol );
             cout << move << endl;
-            return move;
+            return;
         }
     }
+    
 }
 
-void announceWinner(char winner, char computer, char human)
+
+/********************************************************
+ *                   BOARD FUNCTIONS                    *
+ ********************************************************/
+
+// Show the current progress of the game. Also indicate the symbols of the players.
+void Board::displayBoard( char user , char cpu )
 {
-	if (winner == computer)
-    {
-        cout << winner << "'s won!\n";
-        cout << "Computer player has won.\n";
-    }
-
-	else if (winner == human)
-    {
-        cout << winner << "'s won!\n";
-        cout << "Human player has won.\n";
-    }
-
-	else
-    {
-        cout << "It's a tie.\n";
-	}
+    cout << "\n\tUser-" << user << "   AI-" << cpu << endl;
+    cout << "\t[ " << board[0] << " | " << board[1] << " | " << board[2] << " ]\t[ 0 | 1 | 2 ]" << endl;
+    cout << "\t[ " << board[3] << " | " << board[4] << " | " << board[5] << " ]\t[ 3 | 4 | 5 ]" << endl;
+    cout << "\t[ " << board[6] << " | " << board[7] << " | " << board[8] << " ]\t[ 6 | 7 | 8 ]" << endl;
+    cout << endl;
 }
 
+// Determine if a spot is already filled in.
+bool Board::legal(int move)
+{
+    return ( board[move] == ' ' );
+}
 
+// Inserts a player's choice on the board, X or O.
+void Board::changeBoard( int choice , char playerSymbol )
+{
+    board[choice] = playerSymbol;
+}
 

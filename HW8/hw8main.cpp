@@ -2,7 +2,7 @@
  * File:   hw8classes.h
  * Author: Roy Van Liew and Saqib Zahid
  * Tic-Tac-Toe main application.
- * Last modified on April 19, 2014, 8:03 PM
+ * Last modified on April 21, 2014, 8:39 PM
  */
 
 #include <iostream>
@@ -13,46 +13,43 @@
 
 using namespace std;
 
-//int main()
-//{
-//    cout << "Instantiating a Critter object.\n\n";
-//    
-//    Critter crit;
-//    crit.Greet();
-//
-//    return 0;
-//}
 
 int main()
 {
-    int move;
-    const int NUM_SQUARES = 9;
-    vector<char> board(NUM_SQUARES, EMPTY);
-
-    instructions();
-    char human = humanPiece();
-    char computer = opponent(human);
-    char turn = X;
-    displayBoard(board);
-
-    while (winner(board) == NO_ONE)
+    
+    // Create all the classes for the game.
+    Board TTT_Board; // TTT for Tic Tac Toe, this is the playing field.
+    Game TTT; // TTT for Tic Tac Toe. This object is an instance of one game of Tic Tac Toe.
+    Human User;
+    Computer AI;
+    
+    // Welcome the user to a game of Tic Tac Toe and set who's going first.
+    TTT.instructions(); 
+    User.goFirst();
+    AI.computerSymbol( User.getSymbol() ); // Computer's symbol is opposite of player.
+    
+    // Simulate a round of playing the game. Keep going if the winner is no one 'N'.
+    TTT_Board.displayBoard( User.getSymbol() , AI.getSymbol() );
+    while ( TTT.checkWinner(TTT_Board) == 'N')
     {
-        if (turn == human)
+        // See whose turn it is, then have the player fill in a spot on the board.
+        if ( TTT.getTurn() == User.getSymbol() )
         {
-            move = humanMove(board, human);
-            board[move] = human;
+            User.playerMove( TTT_Board );
         }
         else
         {
-            move = computerMove(board, computer);
-            board[move] = computer;
+            AI.playerMove( TTT , TTT_Board , User.getSymbol() );
         }
-        displayBoard(board);
-        turn = opponent(turn);
+        // After the player has filled in a spot, display the board again and change the turn.
+        TTT_Board.displayBoard( User.getSymbol() , AI.getSymbol() );
+        TTT.changeTurn();
     }
-
-    announceWinner(winner(board), computer, human);
-
+    
+    // This means that there was either a winner or the board is full.
+    TTT.announceWinner( TTT.checkWinner( TTT_Board ) , AI.getSymbol() , User.getSymbol() );
+    
     return 0;
+    
 }
 
