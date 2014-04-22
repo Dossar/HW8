@@ -3,7 +3,7 @@
  * Author: Roy Van Liew and Saqib Zahid
  * This is the header file for the Tic Tac Toe OOP design.
  * This has function declarations and class definitions.
- * Last modified on April 21, 2014, 8:37 PM
+ * Last modified on April 22, 2014, 10:48 AM
  */
 
 #include <iostream>
@@ -37,9 +37,8 @@ class Board {
                 vector<char> getBoard(){ return board; } // Get a copy of the board.
                 int getSize(){ return board.size(); } // Get the size of the board for bounds.
                 
-	protected:
+	private:
 		vector<char> board; // This is the playing field.
-
 
 };
 
@@ -73,7 +72,6 @@ class Game {
                 char turn; // Stores the current turn (X or O).
                 int winRows[8][3]; // Lists all possible ways to win.
 		
-
 };
 
 // Generalization of a tic tac toe player. Human and Computer inherit these members.
