@@ -47,20 +47,31 @@ class Board {
 class Game {
 
 	public:
-                // First turn is always X.
+                // First turn is always X. Also initialize the winning rows.
                 Game()
                 {
                     turn = 'X';
+                    //int winRows[8][3] = { {0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6},
+                    //                      {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6} };
+                    winRows[0][0] = 0, winRows[0][1] = 1, winRows[0][2] = 2, // {0, 1, 2}
+                    winRows[1][0] = 3, winRows[1][1] = 4, winRows[1][2] = 5, // {3, 4, 5}
+                    winRows[2][0] = 6, winRows[2][1] = 7, winRows[2][2] = 8, // {6, 7, 8}
+                    winRows[3][0] = 0, winRows[3][1] = 3, winRows[3][2] = 6, // {0, 3, 6}
+                    winRows[4][0] = 1, winRows[4][1] = 4, winRows[4][2] = 7, // {1, 4, 7}
+                    winRows[5][0] = 2, winRows[5][1] = 5, winRows[5][2] = 8, // {2, 5, 8}
+                    winRows[6][0] = 0, winRows[6][1] = 4, winRows[6][2] = 8, // {0, 4, 8}
+                    winRows[7][0] = 2, winRows[7][1] = 4, winRows[7][2] = 6; // {2, 4, 6}
                 }
                 
 		void instructions(); // Print out instructions
                 char getTurn(){ return turn; } // Return what the current turn is.
                 void changeTurn(); // Change the turn for after a player fills in a spot.
                 char checkWinner( Board& gameBoard ); // Check if there's a winner, tie, or neither.
-                void announceWinner(char winner, char computer, char human); // Output the winner.
+                void announceWinner(char winner, char computer, char human); // Output the winner.                
                 
-        protected:
-                char turn; // This member variable stores whose turn it is (human or computer, X or O).
+        private:
+                char turn; // Stores the current turn (X or O).
+                int winRows[8][3]; // Lists all possible ways to win.
 		
 
 };
@@ -90,8 +101,18 @@ class Human : public AbstractPlayer {
 class Computer : public AbstractPlayer {
     
         public:
+                // Computer constructor initializes the bestMoves array.
+                Computer()
+                {
+                    // bestMoves[9] = {4, 0, 2, 6, 8, 1, 3, 5, 7};
+                    bestMoves[0] = 4, bestMoves[1] = 0, bestMoves[2] = 2,
+                    bestMoves[3] = 6, bestMoves[4] = 8, bestMoves[5] = 1,
+                    bestMoves[6] = 3, bestMoves[7] = 5, bestMoves[8] = 7;                
+                }
                 void playerMove( Game& game , Board& gameBoard , char human ); // Determine computer's move on the board.
                 void computerSymbol(char humanSymbol); // Set computer's symbol (X or O) depending on user symbol.
+        private:
+                int bestMoves[9]; // These are the best moves to make in order.
 
 };
 

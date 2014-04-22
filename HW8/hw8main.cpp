@@ -46,7 +46,7 @@ int main()
         TTT.changeTurn();
     }
     
-    // This means that there was either a winner or the board is full.
+    // Getting to here means that there was either a winner or the board is full.
     TTT.announceWinner( TTT.checkWinner( TTT_Board ) , AI.getSymbol() , User.getSymbol() );
     
     return 0;
