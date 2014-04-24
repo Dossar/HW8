@@ -3,7 +3,7 @@
  * Author: Roy Van Liew and Saqib Zahid
  * This is the header file for the Tic Tac Toe OOP design.
  * This has function declarations and class definitions.
- * Last modified on April 22, 2014, 10:48 AM
+ * Last modified on April 23, 2014, 8:35 PM
  */
 
 #include <iostream>
@@ -78,7 +78,8 @@ class Game {
 class AbstractPlayer {
 
 	public:
-		virtual void playerMove( Board& gameBoard ){} // This is for determining where a player moves on the board.
+		virtual void playerMove(){} // This is for determining where a player moves on the board.
+                virtual void selectPiece(){} // This is for determining the player's symbol (X or O).
                 char getSymbol(){ return symbol; } // Return player's symbol to display (X or O).
 
 	protected:
@@ -91,7 +92,7 @@ class Human : public AbstractPlayer {
 
 	public:
                 void playerMove( Board& gameBoard ); // Determine user's move on the board.
-		void goFirst(); // Set the user's symbol (X or O), determines if user goes first or not.
+		void selectPiece(); // Set the user's symbol (X or O), determines if user goes first or not.
 
 };
 
@@ -108,7 +109,7 @@ class Computer : public AbstractPlayer {
                     bestMoves[6] = 3, bestMoves[7] = 5, bestMoves[8] = 7;                
                 }
                 void playerMove( Game& game , Board& gameBoard , char human ); // Determine computer's move on the board.
-                void computerSymbol(char humanSymbol); // Set computer's symbol (X or O) depending on user symbol.
+                void selectPiece(char humanSymbol); // Set computer's symbol (X or O) depending on user symbol.
         private:
                 int bestMoves[9]; // These are the best moves to make in order.
 

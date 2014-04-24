@@ -1,8 +1,8 @@
 /* 
- * File:   hw8classes.h
+ * File:   hw8main.cpp
  * Author: Roy Van Liew and Saqib Zahid
  * Tic-Tac-Toe main application.
- * Last modified on April 22, 2014, 10:22 AM
+ * Last modified on April 23, 2014, 8:36 PM
  */
 
 #include <iostream>
@@ -25,8 +25,8 @@ int main()
     
     // Welcome the user to a game of Tic Tac Toe and set who's going first.
     TTT.instructions(); 
-    User.goFirst();
-    AI.computerSymbol( User.getSymbol() ); // Computer's symbol is opposite of player.
+    User.selectPiece();
+    AI.selectPiece( User.getSymbol() ); // Computer's symbol is opposite of player.
     
     // Simulate a round of playing the game. Keep going if the winner is no one 'N'.
     TTT_Board.displayBoard( User.getSymbol() , AI.getSymbol() );

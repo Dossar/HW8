@@ -2,7 +2,7 @@
  * File:   hw8functions.cpp
  * Author: Roy Van Liew and Saqib Zahid
  * This file contains the actual implementations for the application.
- * Last modified on April 22, 2014, 10:22 AM
+ * Last modified on April 23, 2014, 8:30 PM
  */
 
 #include <iostream>
@@ -83,7 +83,7 @@ void Game::announceWinner( char winner, char computer, char human )
 
 // Ask the user if the user wants to go first in the game.
 // This function also sets the user's symbol for the game (X or O).
-void Human::goFirst()
+void Human::selectPiece()
 {
     char response; // User's input.
     do
@@ -131,7 +131,7 @@ void Human::playerMove( Board& gameBoard )
  ********************************************************/
 
 // Determine the computer's symbol based on what the user entered.
-void Computer::computerSymbol(char humanSymbol)
+void Computer::selectPiece(char humanSymbol)
 {
     if ( humanSymbol == 'X')
         symbol = 'O';
